@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SIMO</title>
+</head>
+<body>
+
+<!--          -->
+<!-- CDNs lib -->
+<!--          -->
+<!-- vuejs -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<!-- JQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<!-- materialize -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+
+
+<div class="navbar-fixed">
+  <nav>
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">SIMO</a>
+      <!-- <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="viager.html">Viager</a></li>
+      </ul> -->
+    </div>
+  </nav>
+</div>
+
+<header class="container section">
+  <h1>Bienvenue sur SIMO</h1>
+  <p>SIMO est un site de simulation et d'explication pour l'immobilier</p>
+  <div class="divider"></div>
+</header>
+
+<main class="container">
+  <h2>Simulation viager</h2>
+  <div class="divider"></div>
+
+  <h3>Présentation</h3>
+
+  <p>un <a href="https://fr.wikipedia.org/wiki/Vente_en_viager_d%27un_bien_immobilier_en_France">viager</a> (Wikipedia) est un type de vente immobilière s'étalant sur la vie du vendeur.</p>
+
+  <p>Je ne ferai pas une explication globale des avantages/inconvénients de l'achat d'un viager, de nombreux sites le font. En revanche voici quelques explications sur l'évaluation d'un viager.</p>
+
+
+  <div class="divider"></div>
+  <h3>Estimation</h3>
+
+  <p>Voici quelques définitions pour commencer:</p>
+  <ul>
+    <li><strong>valeur vénale</strong> (VV): c'est le prix d'achat si le bien était vendu tout de suite</li>
+    <li><strong>décôte</strong> (D): c'est le montant pour prendre en compte l'occupation du logement (si occupation il y a)</li>
+    <li><strong>bouquet</strong> (B): c'est la somme versée au moment de la signature du viager</li>
+    <li><strong>rente</strong> (R): c'est le montant donné par mois au vendeur</li>
+  </ul>
+
+  <p>Pour estimer un viager, il faut calculer deux points:</p>
+  <ul>
+    <li>la valeur du viager</li>
+    <li>la répartition entre bouquet et rente</li>
+  </ul>
+
+  <h4>Valeur d'un viager</h4>
+
+  <p>La valeur d'un viager correspond à la valeur vénale moins la décôte. Par exemple, si un appartement est évalué à 100 000€ et que la décôte est de 40 000€, l'acheteur va devoir payé 100 000 - 40 000 = 60 000€</p>
+
+  <p>Estimer la valeur vénale est le travail d'expert immobilier. Cela dit, certaines plateformes comme <a href="http://www.meilleursagents.com/">Meilleurs agents</a> peuvent fournir une première approximation.</p>
+
+  <p>Estimer la décôte est plus simple: elle correspond à la valeur d'usage. Pour faire simple, la valeur d'usage est égale au montant du loyer que paierait un locataire s'il habitait dans l'appartement durant l'espérance de vie restant au vendeur.</p>
+
+  <p>Prenons un exemple. Une personne de 80 ans souhaite vendre son appartement en viager. L'appartement est estimé à 300 000 € et le loyer 1000€/mois soit 12 000€/an. D'après les tables de l'<a href="http://www.insee.fr/fr/statistiques/2045139?sommaire=2045470&q=table+mortalit%C3%A9">INSEE</a> le vendeur a une espérance de vie de 11,10 ans. Ainsi, la décôte sera de 11,1 * 12 000 = 133 200€. La valeur du viager est donc de 300 000 - 133 200 = 166 800€.</p>
+
+  <p>Si le viager est libre, il n'y a bien évidemment pas de décôte et la valeur du bien correspond à la valeur vénale.</p>
+
+
+  <h4>Répartition entre bouquet et rente</h4>
+
+  <p>Encore une fois, l'estimation se fait à l'aide de l'espérance de vie du vendeur. Il faut que le bouquet plus la rente donnée durant l'espérance de vie du vendeur correspondent à la valeur du viager.</p>
+
+  <p>En reprenant l'exemple précédent, la valeur est de 166 800€. Ainsi, le bouquet plus la rente payée durant 11,1 ans doit correspondre à cette valeur.</p>
+
+  <ul>
+    <li>Cas 1: pas de rente, la valeur du bouquet sera de 166 800€.</li>
+    <li>Cas 2: pas de bouquet, la valeur de la rente sera de 166 800 / 11,1 = 15 027€/an = 1 252€/mois.</li>
+    <li>Cas 3: le plus fréquent il s'agit d'un mélange des deux. Par exemple pour un bouquet de 50 000€, la rente devra être de 876€/mois.</li>
+  </ul>
+
+
+  <div class="divider"></div>
+  <h3>Simulation</h3>
+
+  <h4>Calcul de la rente</h4>
+
+  <div id="viager-simu">
+    <div class="row">
+
+      <form class="col s12">
+        <div class="row">
+          <div class="input-field col s3">
+            <input
+              id="venal-value" type="number" class="validate"
+              v-model.trim="venalValue"
+            >
+            <label for="venal-value" data-error="entrez un chiffre">Valeur vénale</label>
+          </div>
+          <div class="input-field col s3">
+            <input
+              id="rent" type="number" class="validate"
+              v-model.trim="rent"
+            >
+            <label for="rent" data-error="entrez un chiffre">Loyer mensuel</label>
+          </div>
+          <div class="input-field col s3">
+            <input
+              id="age" type="number" class="validate"
+              v-model.trim="age"
+            >
+            <label for="age" data-error="entrez un chiffre">Age du vendeur</label>
+          </div>
+          <div class="input-field col s3">
+            <input
+              id="bouquet" type="number" class="validate"
+              v-model.trim="bouquet"
+            >
+            <label for="bouquet" data-error="entrez un chiffre">Bouquet</label>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col s6 switch center-align">
+            <label>
+              Libre
+              <input type="checkbox" v-model="free" value="false">
+              <span class="lever"></span>
+              Occupé
+            </label>
+          </div>
+
+          <div class="col s6">
+            <button v-on:click="simulate" class="waves-effect waves-light btn"
+            >Evaluer</button>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="viager-simu-result" v-html="message"></div>
+    </div>
+  </div>
+
+</main>
+
+
+<footer class="page-footer">
+  <div class="footer-copyright">
+    <div class="container">
+        © 2017 Pierre-Victor Chaumier
+        <a class="white-text text-lighten-4 right" href="http://github.com/pvchaumier/">My Github</a>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+
+</body>
+</html>
